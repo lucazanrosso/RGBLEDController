@@ -3,6 +3,7 @@ package com.lucazanrosso.rgbledcontroller;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Locale;
 import java.util.UUID;
 
 import android.content.Intent;
@@ -50,8 +51,8 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        SeekBar seekBar = (SeekBar) findViewById(R.id.seekbar);
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        SeekBar seekBarRed = (SeekBar) findViewById(R.id.seekbar_red);
+        seekBarRed.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
             }
@@ -65,10 +66,43 @@ public class MainActivity extends AppCompatActivity {
                 sendMessage('r', progress);
             }
         });
+
+        SeekBar seekBarGreen = (SeekBar) findViewById(R.id.seekbar_green);
+        seekBarGreen.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                sendMessage('g', progress);
+            }
+        });
+
+        SeekBar seekBarBlue = (SeekBar) findViewById(R.id.seekbar_blue);
+        seekBarBlue.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                sendMessage('b', progress);
+            }
+        });
     }
 
     public void sendMessage(char c, int i) {
-        mConnectedThread.write(Integer.toString(i));
+        mConnectedThread.write(String.format(Locale.getDefault(), "%03d", i) + c);
+        System.out.println(String.format(Locale.getDefault(), "%03d", i) + c);
     }
 
     private class ConnectedThread extends Thread {
@@ -100,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         public void run() {
-            mmBuffer = new byte[1024];
+            mmBuffer = new byte[32];
             int numBytes; // bytes returned from read()
 
             // Keep listening to the InputStream until an exception occurs.
