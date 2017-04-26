@@ -1,5 +1,7 @@
 <resources>
-    <string name="app_name">RGBLEDController</string>
+    <string name="app_name">RGB LED Controller</string>
+    <string name="paired_devices">PAIRED DEVICES</string>
+    <string name="search">SEARCH OTHER DEVICES</string>
     <string name="red">RED</string>
     <string name="green">GREEN</string>
     <string name="blue">BLUE</string>
