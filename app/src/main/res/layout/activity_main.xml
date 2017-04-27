@@ -3,94 +3,27 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingTop="16dp"
-    android:paddingBottom="16dp">
+    android:layout_marginLeft="16dp"
+    android:layout_marginStart="16dp"
+    android:layout_marginRight="16dp"
+    android:layout_marginEnd="16dp">
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/paired_devices"
-        android:paddingLeft="16dp"
-        android:paddingStart="16dp"
-        android:paddingRight="16dp"
-        android:paddingEnd="16dp"/>
+        android:layout_marginTop="16dp"/>
     <ListView
         android:id="@+id/paired_list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="16dp"
-        android:paddingStart="16dp"
-        android:paddingRight="16dp"
-        android:paddingEnd="16dp"/>
+        android:layout_height="wrap_content" />
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="searchDevices"
         android:text="@string/search"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
         android:layout_marginTop="16dp"/>
     <ListView
         android:id="@+id/list_found"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="16dp"
-        android:paddingStart="16dp"
-        android:paddingRight="16dp"
-        android:paddingEnd="16dp"/>
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <LinearLayout
-            android:id="@+id/layout_rgb"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/red"
-                android:textColor="@color/red"
-                android:textStyle="bold"/>
-            <SeekBar
-                android:id="@+id/seekbar_red"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:thumbTint="@color/red"
-                android:progressTint="@color/red"
-                android:max="127"
-                android:paddingTop="16dp"
-                android:paddingBottom="16dp"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/green"
-                android:textColor="@color/green"
-                android:textStyle="bold"/>
-            <SeekBar
-                android:id="@+id/seekbar_green"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:thumbTint="@color/green"
-                android:progressTint="@color/green"
-                android:max="255"
-                android:paddingTop="16dp"
-                android:paddingBottom="16dp"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/blue"
-                android:textColor="@color/blue"
-                android:textStyle="bold"/>
-            <SeekBar
-                android:id="@+id/seekbar_blue"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:thumbTint="@color/blue"
-                android:progressTint="@color/blue"
-                android:max="255"
-                android:paddingTop="16dp"
-                android:paddingBottom="16dp"/>
-        </LinearLayout>
-    </ScrollView>
+        android:layout_height="wrap_content" />
 </LinearLayout>

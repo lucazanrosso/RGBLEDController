@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
 
@@ -25,9 +24,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.SeekBar;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
@@ -39,9 +36,9 @@ public class MainActivity extends AppCompatActivity {
     static Handler mHandler;
 
     private BluetoothAdapter mBluetoothAdapter = null;
-    private BluetoothSocket btSocket = null;
+    public static BluetoothSocket btSocket = null;
 
-    private ConnectedThread mConnectedThread;
+    public static ConnectedThread mConnectedThread;
 
     private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
@@ -50,7 +47,6 @@ public class MainActivity extends AppCompatActivity {
     private ListView availableList;
     private ArrayList<String> availableNames = new ArrayList<>();
     private ArrayList<String> availableAddresses = new ArrayList<>();
-    LinearLayout RGBLayout;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -85,6 +81,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        int MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION = 1;
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION);
+        mBluetoothAdapter.startDiscovery();
+        // Register for broadcasts when a device is discovered.
+        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        registerReceiver(mReceiver, filter);
+
         availableList = (ListView) findViewById(R.id.list_found);
         availableList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -92,64 +97,9 @@ public class MainActivity extends AppCompatActivity {
                 connect(availableNames.get(i), availableAddresses.get(i));
             }
         });
-
-        RGBLayout = (LinearLayout) findViewById(R.id.layout_rgb);
-        RGBLayout.setVisibility(View.GONE);
-
-        SeekBar seekBarRed = (SeekBar) findViewById(R.id.seekbar_red);
-        seekBarRed.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-            }
-
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                sendMessage('r', progress);
-            }
-        });
-
-        SeekBar seekBarGreen = (SeekBar) findViewById(R.id.seekbar_green);
-        seekBarGreen.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-            }
-
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                sendMessage('g', progress);
-            }
-        });
-
-        SeekBar seekBarBlue = (SeekBar) findViewById(R.id.seekbar_blue);
-        seekBarBlue.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-            }
-
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                sendMessage('b', progress);
-            }
-        });
     }
 
-    public void sendMessage(char c, int i) {
-        mConnectedThread.write(String.format(Locale.getDefault(), "%03d", i) + c);
-    }
-
-    private class ConnectedThread extends Thread {
+    public class ConnectedThread extends Thread {
         private final BluetoothSocket mmSocket;
         private final InputStream mmInStream;
         private final OutputStream mmOutStream;
@@ -199,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // Call this from the main activity to send data to the remote device.
-        private void write(String message) {
+        public void write(String message) {
             try {
                 byte[] bytes = message.getBytes();
                 mmOutStream.write(bytes);
@@ -212,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // Call this method from the main activity to shut down the connection.
-        private void cancel() {
+        public void cancel() {
             try {
                 mmSocket.close();
             } catch (IOException e) {
@@ -224,24 +174,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-//        if (resultCode == RESULT_OK) {
-//            connect();
-//        }
-        if (resultCode == RESULT_CANCELED) {
+        if (resultCode == RESULT_CANCELED)
             finish();
-        }
     }
 
     public void connect(String name, String address) {
-        if (btSocket != null && btSocket.isConnected()) {
-            RGBLayout.setVisibility(View.GONE);
-            try {
-                btSocket.close();
-            } catch (IOException e2) {
-                finish();
-            }
-        }
-
         Toast.makeText(this, "Connecting with " + name + "...", Toast.LENGTH_SHORT).show();
 
         BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
@@ -264,7 +201,7 @@ public class MainActivity extends AppCompatActivity {
         if (btSocket.isConnected()) {
             mConnectedThread = new ConnectedThread(btSocket);
             mConnectedThread.start();
-            RGBLayout.setVisibility(View.VISIBLE);
+            startActivity(new Intent(this, RGBActivity.class));
             Toast.makeText(this, "Connected with " + name, Toast.LENGTH_SHORT).show();
         }
     }
@@ -298,8 +235,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mConnectedThread != null) {
-            mConnectedThread.cancel();
+        if (MainActivity.mConnectedThread != null) {
+            MainActivity.mConnectedThread.cancel();
             try {
                 btSocket.close();
             } catch (IOException e2) {
