@@ -55,15 +55,17 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (mBluetoothAdapter == null) {
+        if (mBluetoothAdapter == null)
             Toast.makeText(this, "Bluetooth not found in this device", Toast.LENGTH_SHORT).show();
-        } else {
+        else
             if (!mBluetoothAdapter.isEnabled()) {
                 Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                 startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-            }
-        }
+            } else
+                showPairedAndAvailableDevices();
+    }
 
+    private void showPairedAndAvailableDevices() {
         Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
         ListView pairedList = (ListView) findViewById(R.id.paired_list);
         if (pairedDevices.size() > 0) {
@@ -174,6 +176,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK)
+            showPairedAndAvailableDevices();
         if (resultCode == RESULT_CANCELED)
             finish();
     }
